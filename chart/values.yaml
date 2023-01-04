@@ -10,7 +10,7 @@ nodeSelector: {}
 # Every nodeexporter exposes around 1230 unique metrics, so when targetsCount
 # is set to 1000, then the benchmark generates around 1230*1000=1.23M active time series.
 # See also writeReplicas and writeURLReplicas options.
-targetsCount: 1000
+targetsCount: 2500
 
 # scrapeInterval defines how frequently to scrape nodeexporter targets.
 # This option allows to configure data ingestion rate per every remoteStorages.
@@ -58,11 +58,11 @@ writeReplicas: 1
 
 # writeReplicaMem is the memory limit per each pod writer.
 # See writeReplicas option.
-writeReplicaMem: "4Gi"
+writeReplicaMem: "40Gi"
 
 # writeReplicaCPU is the CPU limit per each pod writer.
 # See writeReplicas option.
-writeReplicaCPU: 2
+writeReplicaCPU: 4
 
 # remoteStorages contains a named list of Prometheus-compatible systems to test.
 # These systems must support data ingestion via Prometheus remote_write protocol.
@@ -71,13 +71,15 @@ writeReplicaCPU: 2
 remoteStorages:
   # the name of the remote storage to test.
   # The name is added to remote_storage_name label at collected metrics
-  vm:
+  vm-0:
+    writeURL: "http://gateway-whizard-operated.kubesphere-monitoring-system.svc:9090/host-wx/api/v1/receive"
+    readURL: "http://gateway-whizard-operated.kubesphere-monitoring-system.svc:9090/host-wx/"
     # writeURL should contain the url, which accepts Prometheus remote_write
     # protocol at the tested remote storage.
     # For example, the following urls may be used for testing VictoriaMetrics:
     # - http://<victoriametrics-addr>:8428/api/v1/write for single-node VictoriaMetrics
     # - http://<vminsert-addr>:8480/insert/0/prometheus/api/v1/write for cluster VictoriaMetrics
-    writeURL: "http://victoria-metrics-victoria-metrics-cluster-vminsert.default.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
+    #writeURL: "http://victoria-metrics-victoria-metrics-cluster-vminsert.default.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
     # writeURLReplicas is an optional number of writeURL replicas to send data to.
     # An unique `url_replica` label is added to every writeURL replica via `extra_label` query arg
     # in order to generate unique time series.
@@ -91,14 +93,14 @@ remoteStorages:
     # For example, the following urls may be used for testing query performance:
     # - http://<victoriametrics-addr>:8428/ for single-node VictoriaMetrics
     # - http://<vmselect-addr>:8481/select/0/prometheus/ for cluster VictoriaMetrics
-    readURL: ""
+    #readURL: ""
     # writeBearerToken is an optional bearer token to use when writing data to writeURL.
-    writeBearerToken: ""
+    #writeBearerToken: ""
     # readBearerToken is an optional bearer token to use when querying data from readURL.
-    readBearerToken: ""
+    #readBearerToken: ""
     # writeHeaders is an optional list of headers in form `header:value`, attached to every write request.
     # multiple headers must be delimited by '^^': 'header1:value1^^header2:value2'
-    writeHeaders: ""
+    #writeHeaders: ""
     # readHeaders is an optional list of headers in form `header:value`, attached to every read request.
     # multiple headers must be delimited by '^^': 'header1:value1^^header2:value2'
-    readHeaders: ""
+    #readHeaders: ""
